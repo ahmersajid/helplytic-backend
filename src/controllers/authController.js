@@ -30,8 +30,7 @@ export const signup = async (req, res, next) => {
         if (user) {
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             await Otp.create({ email: user.email, otp });
-            const message = `Your Helplytics Verification OTP is ${otp}. It will expire in 5 minutes.`;
-            await sendEmail({ email: user.email, subject: 'Helplytics Account Verification OTP', message });
+            await sendEmail({ email: user.email, name: user.name, subject: 'Helplytics Account Verification OTP', otp });
 
             res.status(201).json({
                 _id: user.id,
@@ -82,11 +81,10 @@ export const sendOtp = async (req, res, next) => {
 
         await Otp.create({ email, otp });
 
-        const message = `Your Helplytics Verification OTP is ${otp}. It will expire in 5 minutes.`;
         await sendEmail({
             email,
             subject: 'Helplytics Verification OTP',
-            message
+            otp
         });
 
         res.status(200).json({ success: true, message: 'OTP sent successfully' });
